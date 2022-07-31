@@ -1,4 +1,4 @@
-from flask import flash, redirect, render_template
+from flask import flash, request, render_template
 
 from . import app, db
 from .forms import URLForm
@@ -31,5 +31,7 @@ def get_unique_short_id():
         )
         db.session.add(url)
         db.session.commit()
+        host = request.host_url
+        flash(f'Ваша новая ссылка готова: {host}{short}')
         return render_template('yacut.html', form=form, url=url)
     return render_template('yacut.html', form=form)
