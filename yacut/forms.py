@@ -15,9 +15,7 @@ class URLForm(FlaskForm):
         'Ваш вариант короткой ссылки',
         validators=[
             Optional(),
-            Length(6, 16,
-                   message='Длина должна быть от 6 до 16 символов'
-                   ),
+            Length(max=16, message='Длина должна быть не больше 16 символов'),
         ]
     )
     submit = SubmitField('Создать')
