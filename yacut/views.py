@@ -1,4 +1,5 @@
-from flask import abort, flash, redirect, request, render_template, url_for
+from flask import (abort, flash, redirect, request,
+                   render_template, typing, url_for)
 
 from . import app, db
 from .forms import URLForm
@@ -7,12 +8,12 @@ from .utils import get_unique_short_id
 
 
 @app.route('/', methods=['GET'])
-def index():
+def index() -> typing.ResponseReturnValue:
     return render_template('index.html', form=URLForm()), 200
 
 
 @app.route('/', methods=['POST'])
-def create_id():
+def create_id() -> typing.ResponseReturnValue:
     form = URLForm()
     if form.validate_on_submit():
         original = form.original_link.data
@@ -34,7 +35,7 @@ def create_id():
 
 
 @app.route('/<string:short_id>/')
-def redirect_to_original_url(short_id: str):
+def redirect_to_original_url(short_id: str) -> typing.ResponseReturnValue:
     url = URL_map.query.filter_by(short=short_id).first()
     if url is None:
         return abort(404)

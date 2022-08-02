@@ -9,7 +9,7 @@ class URL_map(db.Model):
     original = db.Column(db.String, nullable=False)
     short = db.Column(db.String, nullable=False, unique=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    fields = ['original', 'short']
+    _fields = ['original', 'short']
 
     def to_dict(self) -> dict:
         return dict(
@@ -18,7 +18,7 @@ class URL_map(db.Model):
         )
 
     def from_dict(self, data: dict) -> None:
-        for field in self.fields:
+        for field in self._fields:
             if field in data:
                 setattr(self, field, data[field])
 
