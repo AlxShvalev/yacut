@@ -1,4 +1,5 @@
 from flask import jsonify, request, typing
+from http import HTTPStatus
 
 from . import app, db
 from .error_handlers import InvalidAPIUsage
@@ -17,7 +18,7 @@ def create_url_api_view() -> typing.ResponseReturnValue:
     url.from_dict(data)
     db.session.add(url)
     db.session.commit()
-    return jsonify(url.to_dict()), 201
+    return jsonify(url.to_dict()), HTTPStatus.CREATED
 
 
 @app.route('/api/id/<string:short_id>/')
@@ -25,5 +26,5 @@ def get_url_api_view(short_id: str) -> typing.ResponseReturnValue:
     """Возвращает оригинальный URL по сокращению."""
     url = URL_map.query.filter_by(short=short_id).first()
     if url is None:
-        raise InvalidAPIUsage('Указанный id не найден', 404)
-    return jsonify(url.get_original_url()), 200
+        raise InvalidAPIUsage('Указанный id не найден', HTTPStatus.NOT_FOUND)
+    return jsonify(url.get_original_url()), HTTPStatus.OK
