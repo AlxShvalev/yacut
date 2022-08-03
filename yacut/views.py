@@ -1,7 +1,7 @@
-from flask import (abort, flash, redirect, request,
-                   render_template, typing, url_for)
+from flask import abort, flash, redirect, request, render_template, typing
+from http import HTTPStatus
 
-from . import app, db
+from . import app, db, SHORT_LINK_LEN
 from .forms import URLForm
 from .models import URL_map
 from .utils import get_unique_short_id
@@ -9,20 +9,20 @@ from .utils import get_unique_short_id
 
 @app.route('/', methods=['GET'])
 def index() -> typing.ResponseReturnValue:
-    return render_template('index.html', form=URLForm()), 200
+    return render_template('index.html', form=URLForm()), HTTPStatus.OK
 
 
 @app.route('/', methods=['POST'])
-def create_id() -> typing.ResponseReturnValue:
+def create_short_url_view() -> typing.ResponseReturnValue:
     form = URLForm()
     if form.validate_on_submit():
         original = form.original_link.data
         short = form.custom_id.data
         if short is None:
-            short = get_unique_short_id(length=6)
+            short = get_unique_short_id(SHORT_LINK_LEN)
         if URL_map.query.filter_by(short=short).first() is not None:
             flash(f'Имя {short} уже занято!')
-            return redirect(url_for('index'))
+            return render_template('index.html', form=form), HTTPStatus.OK
         url = URL_map(
             original=original,
             short=short,
@@ -30,13 +30,14 @@ def create_id() -> typing.ResponseReturnValue:
         db.session.add(url)
         db.session.commit()
         short_link = request.host_url + short
-        return render_template('index.html', form=form, url=short_link), 200
-    return render_template('index.html', form=form), 200
+        return (render_template('index.html', form=form, url=short_link),
+                HTTPStatus.OK)
+    return render_template('index.html', form=form), HTTPStatus.OK
 
 
-@app.route('/<string:short_id>/')
-def redirect_to_original_url(short_id: str) -> typing.ResponseReturnValue:
-    url = URL_map.query.filter_by(short=short_id).first()
-    if url is None:
-        return abort(404)
-    return redirect(url.original, code=302)
+@app.route('/<string:short_id>', methods=['GET'])
+def get_original_url_view(short_id: str) -> typing.ResponseReturnValue:
+    url_map = URL_map.query.filter_by(short=short_id).first()
+    if url_map is not None:
+        return redirect(url_map.original, code=HTTPStatus.FOUND)
+    abort(HTTPStatus.NOT_FOUND)
