@@ -14,6 +14,7 @@ def index() -> typing.ResponseReturnValue:
 
 @app.route('/', methods=['POST'])
 def create_short_url_view() -> typing.ResponseReturnValue:
+    """Создает новое сокращение в базе."""
     form = URLForm()
     if form.validate_on_submit():
         original = form.original_link.data
@@ -37,6 +38,7 @@ def create_short_url_view() -> typing.ResponseReturnValue:
 
 @app.route('/<string:short_id>', methods=['GET'])
 def get_original_url_view(short_id: str) -> typing.ResponseReturnValue:
+    """Перенапраялвет на оригинальный URL по короткому"""
     url_map = URL_map.query.filter_by(short=short_id).first()
     if url_map is not None:
         return redirect(url_map.original, code=HTTPStatus.FOUND)

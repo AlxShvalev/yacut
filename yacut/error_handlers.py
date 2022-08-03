@@ -1,10 +1,12 @@
 from flask import jsonify, render_template, typing
+from http import HTTPStatus
 
 from . import app, db
 
 
 class InvalidAPIUsage(Exception):
-    status_code = 400
+    """Класс для обработки ошибок API"""
+    status_code = HTTPStatus.BAD_REQUEST
 
     def __init__(self, message, status_code=None):
         super().__init__()
@@ -18,15 +20,18 @@ class InvalidAPIUsage(Exception):
 
 @app.errorhandler(InvalidAPIUsage)
 def invalid_api_usage(error: InvalidAPIUsage) -> typing.ResponseReturnValue:
+    """Возвращает JSON текста ошибки API."""
     return jsonify(error.to_dict()), error.status_code
 
 
 @app.errorhandler(404)
 def page_not_found(error: int) -> typing.ResponseReturnValue:
+    """Рендер шаблона ошибки 404."""
     return render_template('404.html'), 404
 
 
 @app.errorhandler(500)
 def internal_error(error: int) -> typing.ResponseReturnValue:
+    """Рендер шаблона ошибки 500."""
     db.session.rollback()
     return render_template('500.html'), 500

@@ -7,7 +7,8 @@ from .validators import custom_id_validator, request_validator, url_validator
 
 
 @app.route('/api/id/', methods=['POST'])
-def create_url() -> typing.ResponseReturnValue:
+def create_url_api_view() -> typing.ResponseReturnValue:
+    """Создает новое сокращение в базе."""
     data = request_validator(request.get_json())
     original = url_validator(data.get('url'))
     short = custom_id_validator(data.get('custom_id'))
@@ -20,7 +21,8 @@ def create_url() -> typing.ResponseReturnValue:
 
 
 @app.route('/api/id/<string:short_id>/')
-def get_url(short_id: str) -> typing.ResponseReturnValue:
+def get_url_api_view(short_id: str) -> typing.ResponseReturnValue:
+    """Возвращает оригинальный URL по сокращению."""
     url = URL_map.query.filter_by(short=short_id).first()
     if url is None:
         raise InvalidAPIUsage('Указанный id не найден', 404)
