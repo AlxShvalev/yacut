@@ -3,6 +3,9 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from settings import Config
 
+SHORT_LINK_LEN = 6
+SHORT_LINK_TEMPLATE = r'^[a-zA-Z0-9]{,16}$'
+
 app = Flask(
     __name__,
     static_folder='../html',
