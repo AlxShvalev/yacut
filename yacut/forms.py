@@ -1,4 +1,3 @@
-import re
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, URLField
 from wtforms.validators import DataRequired, Length, Optional, Regexp, URL
@@ -20,7 +19,7 @@ class URLForm(FlaskForm):
             Optional(),
             Length(max=16, message='Допустимая длина 16 символов.'),
             Regexp(
-                re.compile(SHORT_LINK_TEMPLATE),
+                SHORT_LINK_TEMPLATE,
                 message=('Допустимые символы: '
                          'буквы латинского алфавита и цифры.')
             )
