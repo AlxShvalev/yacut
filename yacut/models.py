@@ -22,7 +22,10 @@ class URL_map(db.Model):
             if field in data:
                 setattr(self, field, data[field])
 
-    def get_original_url(self) -> dict:
+    def original_url_to_dict(self) -> dict:
         return dict(
             url=self.original
         )
+
+    def get_short_url(self):
+        return request.host_url + self.short

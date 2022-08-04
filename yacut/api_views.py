@@ -27,4 +27,4 @@ def get_url_api_view(short_id: str) -> typing.ResponseReturnValue:
     url = URL_map.query.filter_by(short=short_id).first()
     if url is None:
         raise InvalidAPIUsage('Указанный id не найден', HTTPStatus.NOT_FOUND)
-    return jsonify(url.get_original_url()), HTTPStatus.OK
+    return jsonify(url.original_url_to_dict()), HTTPStatus.OK
