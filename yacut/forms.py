@@ -1,6 +1,9 @@
+import re
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, URLField
-from wtforms.validators import DataRequired, Length, Optional, URL
+from wtforms.validators import DataRequired, Length, Optional, Regexp, URL
+
+from . import SHORT_LINK_TEMPLATE
 
 
 class URLForm(FlaskForm):
@@ -15,7 +18,11 @@ class URLForm(FlaskForm):
         'Ваш вариант короткой ссылки',
         validators=[
             Optional(),
-            Length(max=16, message='Длина должна быть не больше 16 символов'),
+            Regexp(
+                re.compile(SHORT_LINK_TEMPLATE),
+                message=('Допустимые символы: a-z, A-Z, 0-9. '
+                         'максимальная длина 16 символов')
+            )
         ]
     )
     submit = SubmitField('Создать')
