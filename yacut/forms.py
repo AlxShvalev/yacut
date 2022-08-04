@@ -18,10 +18,11 @@ class URLForm(FlaskForm):
         'Ваш вариант короткой ссылки',
         validators=[
             Optional(),
+            Length(max=16, message='Допустимая длина 16 символов.'),
             Regexp(
                 re.compile(SHORT_LINK_TEMPLATE),
-                message=('Допустимые символы: a-z, A-Z, 0-9. '
-                         'максимальная длина 16 символов')
+                message=('Допустимые символы: '
+                         'буквы латинского алфавита и цифры.')
             )
         ]
     )
