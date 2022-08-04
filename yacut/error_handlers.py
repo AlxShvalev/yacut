@@ -27,11 +27,11 @@ def invalid_api_usage(error: InvalidAPIUsage) -> typing.ResponseReturnValue:
 @app.errorhandler(404)
 def page_not_found(error: int) -> typing.ResponseReturnValue:
     """Рендер шаблона ошибки 404."""
-    return render_template('404.html'), 404
+    return render_template('404.html'), HTTPStatus.NOT_FOUND
 
 
 @app.errorhandler(500)
 def internal_error(error: int) -> typing.ResponseReturnValue:
     """Рендер шаблона ошибки 500."""
     db.session.rollback()
-    return render_template('500.html'), 500
+    return render_template('500.html'), HTTPStatus.INTERNAL_SERVER_ERROR
